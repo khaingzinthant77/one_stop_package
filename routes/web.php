@@ -13,19 +13,25 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    // return view('dashboard');
-    return redirect()->route('package_dashboard');
-})->middleware('auth');
-Route::get('/home', function () {
-    // return view('dashboard');
-    return redirect()->route('dashboard');
-})->middleware('auth');
+Auth::routes([
+  'register' => false,
+  'reset' => false,
+  'verify' => false,
+]);
 
+Route::get('/',function(){
+    return redirect()->route('home');
+});
+
+// Route::get('/login', function () {
+//     // return view('dashboard');
+//     return redirect()->route('package_dashboard');
+// })->middleware('auth');
+
+Route::get('home','FrontendController@home')->name('home');
 Route::group(['middleware' => 'auth'], function () {
 
-    //main dashboard
-    Route::get('dashboard', 'HomeController@index')->name('dashboard');
+   Route::get('package_dashboard','HomeController@package_dashboard')->name('package_dashboard');
 
     //daily dashboard
     Route::get('daily_dashboard', 'HomeController@daily_dashboard')->name('daily_dashboard');
@@ -177,7 +183,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::post('service_export', 'TicketController@service_export')->name('service_export');
 
-    Route::get('package_dashboard','HomeController@package_dashboard')->name('package_dashboard');
+    
 
     Route::get('one_stock_package_customers','CustomerController@package_customers')->name('package_customers');
 
@@ -196,8 +202,3 @@ Route::group(['middleware' => 'auth'], function () {
     //one stop package customer delete
     Route::delete('package_customer_delete/{id}','CustomerController@package_customer_delete')->name('package_customer.destroy');
 });
-Auth::routes([
-  'register' => false,
-  'reset' => false,
-  'verify' => false,
-]);
