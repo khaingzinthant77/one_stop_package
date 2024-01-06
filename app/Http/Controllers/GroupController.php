@@ -64,7 +64,9 @@ class GroupController extends Controller
                 $user = User::create([
                     'name' => $request->name,
                     'login_id' => $request->loginId,
-                    'group_id'=>$group->id
+                    'group_id'=>$group->id,
+                    'email'=>$request->loginId,
+                    'password'=>bcrypt('123456')
                 ]);
                  DB::commit();
              
