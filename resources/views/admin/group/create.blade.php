@@ -40,6 +40,15 @@
             </div>
             <br>
             <div class="row">
+               
+                    <label class="col-md-2 unicode">Password*</label>
+                    <div class="col-md-5">
+                        <input type="password" name="password" id="password" value="{{ old('password') }}" class="form-control unicode" placeholder="">
+                    </div>    
+               
+            </div>
+            <br>
+            <div class="row">
                     <div class="col-md-2"></div>
                     <div class="col-md-5">
                         <a class="btn btn-primary unicode" href="{{route('group.index')}}"> Back</a>

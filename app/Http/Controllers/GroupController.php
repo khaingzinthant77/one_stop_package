@@ -66,7 +66,7 @@ class GroupController extends Controller
                     'login_id' => $request->loginId,
                     'group_id'=>$group->id,
                     'email'=>$request->loginId,
-                    'password'=>bcrypt('123456')
+                    'password'=>bcrypt($request->password)
                 ]);
                  DB::commit();
              
@@ -131,7 +131,10 @@ class GroupController extends Controller
 
 
         $group = $group->update($arr);
-        $user = User::where('group_id',$id)->update(['name'=>$request->name,'login_id'=>$request->loginId]);
+        $usr = User::where('group_id',$id);
+        $pwd = $request->password != null ? bcrypt($request->password) : $usr->password;
+
+        $user = User::where('group_id',$id)->update(['name'=>$request->name,'login_id'=>$request->loginId,'password'=>$pwd]);
         $values = Survey::where('survey_by', $id)->update(['survey_name'=>$request->name]);
 
         return redirect()->route('group.index')
@@ -150,9 +153,20 @@ class GroupController extends Controller
         if ($technicians->count()>0) {
             return redirect()->route('group.index')->with('error','Team cannot delete!!');
         }else{
-            $group = Group::findorfail($id);
+            
+            DB::beginTransaction();
+            try {
 
-            $group = $group->delete();
+                $user = User::where('group_id',$id)->delete();
+
+                $group = Group::findorfail($id)->delete();
+
+                DB::commit();
+            } catch (Exception $e) {
+                DB::rollback();
+                return redirect()->route('group.index')->with('error','Team cannot delete!!');
+            }
+            
 
             return redirect()->route('group.index')->with('success','Success');
         }
