@@ -180,6 +180,7 @@
                @endif
             </tbody>
         </table>
+        {{ $customer_list->appends(request()->input())->links()}}
     </div>
     </div>
 @stop 
