@@ -655,4 +655,66 @@ class CustomerController extends Controller
         }
        
     }
+
+    public function package_edit($id) {
+        $customer = Customer::find($id);
+        $home_packages = CustomerHavePackage::where('customer_id', $id)
+                            ->where('type', 'home')
+                            ->pluck('package')->toArray();
+    
+        $shop_packages = CustomerHavePackage::where('customer_id', $id)
+        ->where('type', 'shop')
+        ->pluck('package')->toArray();
+
+        $office_packages = CustomerHavePackage::where('customer_id', $id)
+                            ->where('type', 'office')
+                            ->pluck('package')->toArray();
+        return view('admin.one_stock_package.edit',compact('customer','home_packages','shop_packages','office_packages'));
+    }
+
+    public function one_stop_update($id,Request $request) {
+       DB::beginTransaction();
+       try {
+        $customer = Customer::find($id)->update([
+            'name'=>$request->name,
+            'phone_no'=>$request->ph_no,
+            'tsh_id'=>$request->tsh_id,
+            'address'=>$request->address,
+            'lat'=>$request->lat,
+            'lng'=>$request->lng,
+            'remark'=>$request->remark,
+            'created_at'=>date('Y-m-d',strtotime($request->created_date)).' '.date('H:i:s')
+        ]);
+        $packages = CustomerHavePackage::where('customer_id',$id)->delete();
+
+        $packageList = [];
+
+        foreach ($request->input('install_type') as $installType) {
+            $currentPackageList = [
+                'install_type' => $installType,
+                'package' => $request->input($installType . '_package', [])
+            ];
+
+            $packageList[] = $currentPackageList;
+        }
+
+        foreach ($packageList as $key => $value) {
+            
+            foreach ($value['package'] as $key => $package) {
+                $c_package = CustomerHavePackage::create([
+                    'customer_id'=>$id,
+                    'type'=>$value['install_type'],
+                    'package'=>$package
+                ]);
+            }
+            
+        }
+
+        DB::commit();
+        return redirect()->route('package_customers')->with('success','Success');
+       } catch (Exception $e) {
+        DB::rollback();
+        return redirect()->route('package_customers')->with('error',$e->getMessage());
+       }
+    }
 }

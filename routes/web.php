@@ -201,4 +201,10 @@ Route::group(['middleware' => 'auth'], function () {
 
     //one stop package customer delete
     Route::delete('package_customer_delete/{id}','CustomerController@package_customer_delete')->name('package_customer.destroy');
+
+    //one stop customer edit
+    Route::get('package_edit/{id}','CustomerController@package_edit')->name('package_edit');
+
+    //one stop customer update
+    Route::put('one_stop_update/{id}','CustomerController@one_stop_update')->name('one_stop.update');
 });

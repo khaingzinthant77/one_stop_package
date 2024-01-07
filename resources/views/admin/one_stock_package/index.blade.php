@@ -166,8 +166,8 @@
                         <form action="{{route('package_customer.destroy',$list->id)}}" method="POST" onsubmit="return confirm('Do you really want to delete?');" style="margin-left: 10px">
                             @csrf
                             @method('DELETE')
-
-                           <button type="submit" class="btn btn-sm btn-danger"><i class="fa fa-fw fa-trash" /></i></button> 
+                            <a href="{{route('package_edit',$list->id)}}" class="btn btn-sm btn-primary"><i class="fas fa fa-edit"></i></a>
+                           <button type="submit" class="btn btn-sm btn-danger"><i class="fa fa-fw fa-trash"></i></button> 
                            
                           </form>
                     </td>
